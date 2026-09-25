@@ -6,6 +6,21 @@ variables, functions, OOP, file handling, and exception handling.
 """
 
 
+class StudentNotFoundError(Exception):
+    """Raised when a requested student ID does not exist in the records."""
+    pass
+
+
+class DuplicateStudentError(Exception):
+    """Raised when trying to add a student ID that already exists."""
+    pass
+
+
+class InvalidDataError(Exception):
+    """Raised when student data fails validation."""
+    pass
+
+
 class Student:
     """Represents a single student record."""
 
