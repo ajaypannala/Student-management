@@ -134,3 +134,129 @@ class StudentManager:
 
     def list_students(self):
         return list(self.students.values())
+
+
+# ---------- CLI Helper Functions ----------
+
+MENU_TEXT = """
+========= Student Management System =========
+1. Add a student
+2. View all students
+3. Search student by ID
+4. Update a student
+5. Delete a student
+6. Exit
+===============================================
+"""
+
+
+def prompt_int(prompt_text):
+    """Prompt the user for an integer, re-asking on invalid input."""
+    while True:
+        try:
+            return int(input(prompt_text).strip())
+        except ValueError:
+            print("Please enter a valid whole number.")
+
+
+def add_student_flow(manager):
+    print("\n--- Add New Student ---")
+    student_id = input("Student ID: ").strip()
+    name = input("Name: ").strip()
+    age = prompt_int("Age: ")
+    grade = input("Grade/Class: ").strip()
+    email = input("Email: ").strip()
+
+    try:
+        manager.add_student(student_id, name, age, grade, email)
+        print(f"Student '{name}' added successfully.")
+    except (DuplicateStudentError, InvalidDataError) as e:
+        print(f"Error: {e}")
+
+
+def view_students_flow(manager):
+    print("\n--- All Students ---")
+    students = manager.list_students()
+    if not students:
+        print("No student records found.")
+        return
+    for student in students:
+        print(student)
+
+
+def search_student_flow(manager):
+    print("\n--- Search Student ---")
+    student_id = input("Enter Student ID: ").strip()
+    try:
+        student = manager.get_student(student_id)
+        print(student)
+    except StudentNotFoundError as e:
+        print(f"Error: {e}")
+
+
+def update_student_flow(manager):
+    print("\n--- Update Student ---")
+    student_id = input("Enter Student ID to update: ").strip()
+    try:
+        manager.get_student(student_id)  # confirm existence first
+    except StudentNotFoundError as e:
+        print(f"Error: {e}")
+        return
+
+    print("Leave a field blank to keep its current value.")
+    name = input("New Name: ").strip() or None
+    age_input = input("New Age: ").strip()
+    age = int(age_input) if age_input.isdigit() else None
+    grade = input("New Grade/Class: ").strip() or None
+    email = input("New Email: ").strip() or None
+
+    try:
+        manager.update_student(student_id, name=name, age=age, grade=grade, email=email)
+        print("Student updated successfully.")
+    except (StudentNotFoundError, InvalidDataError) as e:
+        print(f"Error: {e}")
+
+
+def delete_student_flow(manager):
+    print("\n--- Delete Student ---")
+    student_id = input("Enter Student ID to delete: ").strip()
+    try:
+        manager.delete_student(student_id)
+        print("Student deleted successfully.")
+    except StudentNotFoundError as e:
+        print(f"Error: {e}")
+
+
+def main():
+    manager = StudentManager()
+
+    while True:
+        print(MENU_TEXT)
+        choice = input("Enter your choice (1-6): ").strip()
+
+        try:
+            if choice == "1":
+                add_student_flow(manager)
+            elif choice == "2":
+                view_students_flow(manager)
+            elif choice == "3":
+                search_student_flow(manager)
+            elif choice == "4":
+                update_student_flow(manager)
+            elif choice == "5":
+                delete_student_flow(manager)
+            elif choice == "6":
+                print("Goodbye!")
+                break
+            else:
+                print("Invalid choice. Please enter a number between 1 and 6.")
+        except KeyboardInterrupt:
+            print("\nInterrupted. Exiting safely.")
+            break
+        except Exception as e:
+            # Catch-all safety net so one bad operation never crashes the app
+            print(f"An unexpected error occurred: {e}")
+
+
+if __name__ == "__main__":
+    main()
