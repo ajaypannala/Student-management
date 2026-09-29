@@ -1,9 +1,4 @@
-"""
-Student Management System
---------------------------
-A command-line application to manage student records, demonstrating
-variables, functions, OOP, file handling, and exception handling.
-"""
+
 
 import json
 import os
@@ -65,10 +60,8 @@ class StudentManager:
 
     def __init__(self, data_file="data/students.json"):
         self.data_file = data_file
-        self.students = {}  # student_id -> Student
+        self.students = {} 
         self.load_from_file()
-
-    # ---------- File Handling ----------
 
     def load_from_file(self):
         """Load students from the JSON file, if it exists."""
@@ -101,7 +94,7 @@ class StudentManager:
         except (OSError, IOError) as e:
             print(f"Error: could not save data to '{self.data_file}' ({e}).")
 
-    # ---------- CRUD Operations ----------
+    
 
     def add_student(self, student_id, name, age, grade, email):
         if student_id in self.students:
@@ -120,7 +113,7 @@ class StudentManager:
         return self.students[student_id]
 
     def update_student(self, student_id, **kwargs):
-        student = self.get_student(student_id)  # raises StudentNotFoundError if missing
+        student = self.get_student(student_id) 
         for field, value in kwargs.items():
             if value is not None and hasattr(student, field):
                 setattr(student, field, value)
@@ -136,7 +129,6 @@ class StudentManager:
         return list(self.students.values())
 
 
-# ---------- CLI Helper Functions ----------
 
 MENU_TEXT = """
 ========= Student Management System =========
@@ -198,7 +190,7 @@ def update_student_flow(manager):
     print("\n--- Update Student ---")
     student_id = input("Enter Student ID to update: ").strip()
     try:
-        manager.get_student(student_id)  # confirm existence first
+        manager.get_student(student_id)  
     except StudentNotFoundError as e:
         print(f"Error: {e}")
         return
@@ -254,7 +246,7 @@ def main():
             print("\nInterrupted. Exiting safely.")
             break
         except Exception as e:
-            # Catch-all safety net so one bad operation never crashes the app
+            
             print(f"An unexpected error occurred: {e}")
 
 
